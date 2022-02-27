@@ -1,20 +1,27 @@
 import webbrowser
 import PySimpleGUI as sg
 
+auth = ""
+
 
 def query():
+    global auth
     sg.theme('DarkAmber')
     window = sg.Window('Github-Lizenz-Mining',
                        [[sg.Text('Name des Repository Besitzers eingeben:',
-                                                    font=(None, 12),
-                                                    size=(35, 1)),
-                                                    sg.InputText()],
+                                 font=(None, 12),
+                                 size=(35, 1)),
+                         sg.InputText()],
                         [sg.Text('Name des Repositorys eingeben:',
-                                                    font=(None, 12),
-                                                    size=(35, 1)),
-                                                    sg.InputText()],
+                                 font=(None, 12),
+                                 size=(35, 1)),
+                         sg.InputText()],
+                        [sg.Text('Authentifizierungs-Token eingeben:',
+                                 font=(None, 12),
+                                 size=(35, 1)),
+                         sg.InputText()],
                         [sg.Button('Ok', bind_return_key=True)]],
-                                    element_justification='center')
+                       element_justification='center')
 
     owner, repo = "", ""
     while owner == "" or repo == "":
@@ -25,15 +32,16 @@ def query():
         if values[0] != "" and values[1] != "":
             owner = values[0]
             repo = values[1]
+            auth = values[2]
             window.close()
         elif values[0] == "":
             sg.popup('Bitte Name des Repository Besitzers eingeben:',
-                                                    font=(None, 12))
+                     font=(None, 12))
         elif values[1] == "":
             sg.popup('Bitte Name des Repositorys eingeben:',
-                                                    font=(None, 12))
+                     font=(None, 12))
 
-    return [owner, repo]
+    return [owner, repo, auth]
 
 
 def printText(text, button_text):
@@ -43,28 +51,28 @@ def printText(text, button_text):
         for i in t:
             if str(i).startswith("Im Repository"):
                 layout += [sg.Text(i, font=(None, 16),
-                                      size=(200, 1),
-                                      justification='center')],
+                                   size=(200, 1),
+                                   justification='center')],
                 break
             if str(i).startswith("Dateilink"):
                 layout += [sg.Text(i, font=(None, 12),
-                                      text_color="LightBlue",
-                                      size=(200, 1),
-                                      justification='center',
-                                      enable_events=True,
-                                      key=f"URL: {i}")],
+                                   text_color="LightBlue",
+                                   size=(200, 1),
+                                   justification='center',
+                                   enable_events=True,
+                                   key=f"URL: {i}")],
             else:
                 layout += [sg.Text(i, font=(None, 12),
-                                      size=(200, 1),
-                                      justification='center')],
+                                   size=(200, 1),
+                                   justification='center')],
     layout += [[sg.Button(button_text, bind_return_key=True, key="end")]]
 
     window = sg.Window('Github-Lizenz-Mining',
-                                    [[sg.Column(layout,
-                                      size=(1400, 500),
-                                      scrollable=True,
-                                      element_justification='center')]],
-                                      element_justification='center')
+                       [[sg.Column(layout,
+                                   size=(1400, 500),
+                                   scrollable=True,
+                                   element_justification='center')]],
+                       element_justification='center')
 
     while True:
         event, values = window.read()
